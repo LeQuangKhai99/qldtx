@@ -15,12 +15,13 @@ import { AuthController } from './auth.controller';
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60000h' }
-    })
+    }),
+    PassportModule.register({session: true})
   ],
   providers: [
     AuthService,
     LocalStrategy,
-    JwtStrategy
+    JwtStrategy,
   ],
   exports: [
     AuthService

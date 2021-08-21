@@ -10,6 +10,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 import { LoginMiddleware } from './common/middleware/login.middleware';
+import { RolesModule } from './roles/roles.module';
+import { RolesGuard } from './roles/guard/roles.guard';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { LoginMiddleware } from './common/middleware/login.middleware';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,
-      port: +process.env.DATABASE_PORT,
+      port: +process.env.DATABASE_PORT, 
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
@@ -30,6 +33,8 @@ import { LoginMiddleware } from './common/middleware/login.middleware';
       synchronize: true,
     }),
     AuthModule,
+    RolesModule,
+    PassportModule.register({session: true})
   ],
   controllers: [AppController],
   providers: [
@@ -37,6 +42,10 @@ import { LoginMiddleware } from './common/middleware/login.middleware';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
     }
   ],
 })

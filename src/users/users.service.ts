@@ -23,7 +23,8 @@ export class UsersService {
     return this.userRepository.findOne({
       where: [
         {username: username}
-      ]
+      ],
+      relations: ['roles']
     });
   }
 
