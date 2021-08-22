@@ -7,6 +7,7 @@ import { jwtConstants } from './constant/constants';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
 import { AuthController } from './auth.controller';
+import { SessionSerializer } from './session.serializer';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthController } from './auth.controller';
     AuthService,
     LocalStrategy,
     JwtStrategy,
+    SessionSerializer
   ],
   exports: [
     AuthService

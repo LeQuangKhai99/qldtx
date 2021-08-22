@@ -1,5 +1,7 @@
-import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Request, UseFilters } from '@nestjs/common';
 import { AppService } from './app.service';
+import { AuthenticatedGuard } from './auth/guard/authenticated.guard';
+import { AuthExceptionFilter } from './common/filters/auth-exceptions.filter';
 
 @Controller()
 export class AppController {
@@ -12,6 +14,8 @@ export class AppController {
     return this.appService.index();
   }
 
+  @UseFilters(AuthExceptionFilter)
+  @UseGuards(AuthenticatedGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
