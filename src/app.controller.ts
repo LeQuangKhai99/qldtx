@@ -2,6 +2,8 @@ import { Controller, Get, Post, UseGuards, Request, UseFilters } from '@nestjs/c
 import { AppService } from './app.service';
 import { AuthenticatedGuard } from './auth/guard/authenticated.guard';
 import { AuthExceptionFilter } from './common/filters/auth-exceptions.filter';
+import { Roles } from './roles/decorator/roles.decorator';
+import { Role } from './roles/enum/role.enum';
 
 @Controller()
 export class AppController {
@@ -12,6 +14,14 @@ export class AppController {
   @Get()
   index() {
     return this.appService.index();
+  }
+
+  @UseFilters(AuthExceptionFilter)
+  @UseGuards(AuthenticatedGuard)
+  @Roles(Role.Admin)
+  @Get('/admin')
+  admin() {
+    return this.appService.admin();
   }
 
   @UseFilters(AuthExceptionFilter)

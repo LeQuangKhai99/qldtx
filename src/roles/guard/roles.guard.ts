@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, Req } from "@nestjs/common";
+import { CanActivate, ExecutionContext, ForbiddenException, HttpException, HttpStatus, Injectable, Req } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ROLES_KEY } from "../decorator/roles.decorator";
 import { Role } from "../enum/role.enum";
@@ -17,8 +17,21 @@ export class RolesGuard implements CanActivate {
         }
 
         const {user} = context.switchToHttp().getRequest();
-        console.log(user.roles);
+        if(!user) {
+            return false;
+        }
+        const roles = user.roles?.map((item) => {
+            return item.name
+        })
         
-        return requiredRoles.some((role) => user.roles?.includes(role));
+        if(requiredRoles.some((role) => roles.includes(role))) {
+            return true;
+        }
+        else {
+            throw new HttpException({
+                status: HttpStatus.FORBIDDEN,
+                message: 'Tai khoản của bạn không có quyền thực hiện chức năng này!',
+            }, HttpStatus.FORBIDDEN);
+        }
     }
 }

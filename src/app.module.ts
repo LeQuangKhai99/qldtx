@@ -13,6 +13,7 @@ import { LoginMiddleware } from './common/middleware/login.middleware';
 import { RolesModule } from './roles/roles.module';
 import { RolesGuard } from './roles/guard/roles.guard';
 import { PassportModule } from '@nestjs/passport';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { PassportModule } from '@nestjs/passport';
     }),
     AuthModule,
     RolesModule,
-    PassportModule.register({session: true})
+    PassportModule.register({session: true}),
+    AdminModule
   ],
   controllers: [AppController],
   providers: [
@@ -43,15 +45,15 @@ import { PassportModule } from '@nestjs/passport';
     //   provide: APP_GUARD,
     //   useClass: JwtAuthGuard
     // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard
-    // }
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
+    }
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoginMiddleware)
-      .forRoutes('/admin/*');
+      .forRoutes('/admin*');
   }
 }

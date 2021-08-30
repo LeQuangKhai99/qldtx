@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
   ForbiddenException,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { json, Request, Response } from 'express';
 
 interface IRequestFlash extends Request {
   flash: any;
@@ -18,15 +18,10 @@ export class AuthExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<IRequestFlash>();
-
-    if (
-      exception instanceof UnauthorizedException ||
-      exception instanceof ForbiddenException
-    ) {
-      request.flash('loginError', 'Please try again!');
-      response.redirect('/auth/login');
-    } else {
-      response.redirect('/error');
-    }
+    
+    exception = JSON.parse(JSON.stringify(exception));
+    
+    request.flash('loginError', exception.message);
+    response.redirect('/auth/login');
   }
 }
