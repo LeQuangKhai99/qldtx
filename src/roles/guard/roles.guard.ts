@@ -18,7 +18,10 @@ export class RolesGuard implements CanActivate {
 
         const {user} = context.switchToHttp().getRequest();
         if(!user) {
-            return false;
+            throw new HttpException({
+                status: HttpStatus.FORBIDDEN,
+                message: 'Vui lòng đăng nhập!',
+            }, HttpStatus.FORBIDDEN);
         }
         const roles = user.roles?.map((item) => {
             return item.name
@@ -30,7 +33,7 @@ export class RolesGuard implements CanActivate {
         else {
             throw new HttpException({
                 status: HttpStatus.FORBIDDEN,
-                message: 'Tai khoản của bạn không có quyền thực hiện chức năng này!',
+                message: 'Tài khoản của bạn không có quyền thực hiện chức năng này!',
             }, HttpStatus.FORBIDDEN);
         }
     }

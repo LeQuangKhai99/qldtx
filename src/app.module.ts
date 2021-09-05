@@ -2,7 +2,6 @@ import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
@@ -10,10 +9,13 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 import { LoginMiddleware } from './common/middleware/login.middleware';
-import { RolesModule } from './roles/roles.module';
-import { RolesGuard } from './roles/guard/roles.guard';
 import { PassportModule } from '@nestjs/passport';
 import { AdminModule } from './admin/admin.module';
+import { UsersModule } from './users/users.module';
+import { RolesModule } from './roles/roles.module';
+import { RolesGuard } from './roles/guard/roles.guard';
+import { CategoriesModule } from './categories/categories.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -36,7 +38,9 @@ import { AdminModule } from './admin/admin.module';
     AuthModule,
     RolesModule,
     PassportModule.register({session: true}),
-    AdminModule
+    AdminModule,
+    CategoriesModule,
+    ProductsModule
   ],
   controllers: [AppController],
   providers: [

@@ -1,31 +1,35 @@
-import { Controller, Get, Post, UseGuards, Request, UseFilters } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Request, UseFilters, Render, Req, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthenticatedGuard } from './auth/guard/authenticated.guard';
+import { Public } from './common/decorators/public.decorator';
 import { AuthExceptionFilter } from './common/filters/auth-exceptions.filter';
 import { Roles } from './roles/decorator/roles.decorator';
 import { Role } from './roles/enum/role.enum';
 
+@UseFilters(AuthExceptionFilter)
+@UseGuards(AuthenticatedGuard)
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
   ) {}
 
+  @Public()
   @Get()
-  index() {
-    return this.appService.index();
+  index(@Req() req, @Res() res) {
+    res.render('static/index', {
+      layout: false
+    });
   }
 
-  @UseFilters(AuthExceptionFilter)
-  @UseGuards(AuthenticatedGuard)
   @Roles(Role.Admin)
   @Get('/admin')
-  admin() {
-    return this.appService.admin();
+  admin(@Req() Req, @Res() res) {
+    res.render('admin/index', {
+      title: 'Dashboard'
+    });
   }
 
-  @UseFilters(AuthExceptionFilter)
-  @UseGuards(AuthenticatedGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;

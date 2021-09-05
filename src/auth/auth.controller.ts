@@ -1,6 +1,5 @@
-import { Controller, Post, UseGuards, Request, Get, Render, Res, UseFilters } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Response } from 'express';
+import { Controller, Post, UseGuards, Get, Render, Res, UseFilters, Req } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { Public } from 'src/common/decorators/public.decorator';
 import { AuthExceptionFilter } from 'src/common/filters/auth-exceptions.filter';
 import { LoginGuard } from 'src/common/guard/login.guard';
@@ -15,14 +14,22 @@ export class AuthController {
     ) {}
 
     @Get('login')
-    @Render('auth/index')
-    index(@Request() req): { message: string } {
-        return { message: req.flash('loginError') };
+    index(@Req() req, @Res() res) {
+        res.render('auth/index', {
+            layout: false,
+            message: req.flash('loginError')
+        });
     }
 
     @UseGuards(LoginGuard)
     @Post('login')
-    login(@Res() res: Response) {
+    login(@Req() req: Request,@Res() res: Response) {
+        res.redirect('/');
+    }
+
+    @Get('logout')
+    logout(@Req() req: Request, @Res() res: Response) {
+        req.logOut();
         res.redirect('/');
     }
 }

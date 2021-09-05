@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class AppService {
   index() {
-    return 'home page';
+    return {'mess': 'a'};
   }
 
   admin() {
-    return 'admin page';
+    return {'test': 'a'};
   }
 }
