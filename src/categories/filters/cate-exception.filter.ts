@@ -17,10 +17,11 @@ import {
       const response = ctx.getResponse<Response>();
       const request = ctx.getRequest<IRequestFlash>();
       
-      exception = JSON.parse(JSON.stringify(exception));
-      console.log(exception);
+      const err = JSON.parse(JSON.stringify(exception));
       
-      request.flash('message', exception.response.message);
+      exception = JSON.parse(JSON.stringify(exception));
+      
+      request.flash('message', exception);
       response.redirect('/admin/category/add');
     }
   }
