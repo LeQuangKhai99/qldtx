@@ -19,6 +19,7 @@
 
     <!-- Custom styles for this template-->
     <link href="/admin/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/admin/css/style.css" rel="stylesheet">
 
 </head>
 
@@ -47,6 +48,16 @@
                         <h6 class="m-0 font-weight-bold text-primary"><%= title %></h6>
                     </div>
                     <div class="card-body">
+                        <% if(error.length !== 0){ %>
+                            <div style="text-align: center; margin: 10px 0;">
+                                <span style="background: red; font-size: 15px; color:white; padding: 5px 10px; border-radius: 5px;"><%= error %></span>
+                            </div>
+                        <% } %>
+                        <% if(success.length !== 0){ %>
+                            <div style="text-align: center; margin: 10px 0;">
+                                <span style="background: green; font-size: 15px; color:white; padding: 5px 10px; border-radius: 5px;"><%= success %></span>
+                            </div>
+                        <% } %>
                         <%- body %>
                     </div>
                 </div>

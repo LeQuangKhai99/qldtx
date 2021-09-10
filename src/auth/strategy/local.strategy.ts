@@ -10,13 +10,14 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     
   }
 
-  async validate(username: string, password: string) {
+  async validate(username: string, password: string) { 
     const user = await this.authService.validateUser(username, password);
     
     if (!user) {
         throw new HttpException({
             status: HttpStatus.FORBIDDEN,
-            message: 'Thông tin đăng nhập không chính xác!',
+            error: ['Thông tin đăng nhập không chính xác!'],
+            redirect: '/auth/login'
         }, HttpStatus.FORBIDDEN);
     }
     return user;

@@ -16,8 +16,10 @@ export class AuthExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<IRequestFlash>();
+    const req = JSON.parse(JSON.stringify(exception.getResponse()));  
     
-    request.flash('loginError', exception.message);
-    response.redirect('/auth/login');
+    request.flash('success', req.success);
+    request.flash('error', req.error);
+    response.redirect(req.redirect);
   }
 }

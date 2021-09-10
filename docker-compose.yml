@@ -33,7 +33,7 @@ services:
     container_name: app_phpmyadmin
     restart: unless-stopped
     ports:
-      - 8282:80
+      - 8668:80
     depends_on: 
       - mysql
     environment:
