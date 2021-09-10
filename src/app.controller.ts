@@ -24,9 +24,11 @@ export class AppController {
 
   @Roles(Role.Admin)
   @Get('/admin')
-  admin(@Req() Req, @Res() res) {
+  admin(@Req() req, @Res() res) {
     res.render('admin/index', {
-      title: 'Dashboard'
+      title: 'Dashboard',
+      error: req.flash('error'),
+      success: req.flash('success'),
     });
   }
 

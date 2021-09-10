@@ -17,7 +17,8 @@ export class AuthController {
     index(@Req() req, @Res() res) {
         res.render('auth/index', {
             layout: false,
-            message: req.flash('loginError')
+            success: req.flash('success'),
+            error: req.flash('error')
         });
     }
 

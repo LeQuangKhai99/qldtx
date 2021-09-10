@@ -22,7 +22,8 @@ export class AuthenticatedGuard implements CanActivate {
         if(!request.isAuthenticated()) {
             throw new HttpException({
                 status: HttpStatus.FORBIDDEN,
-                message: 'Vui lòng đăng nhập!',
+                error: ['Vui lòng đăng nhập!'],
+                redirect: '/auth/login'
             }, HttpStatus.FORBIDDEN);
         }
         else {

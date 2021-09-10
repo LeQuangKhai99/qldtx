@@ -17,7 +17,7 @@
                 <td><%= cate.id %></td>
                 <td><%= cate.name %></td>
                 <td>
-                    <a href="/admin/category/update/<%= cate.slug %>" type="button" class="btn btn-success">Edit</a>
+                    <a href="/admin/category/restore/<%= cate.id %>" type="button" class="btn btn-success">Restore</a>
                     <a href="/admin/category/delete/<%= cate.id %>" type="button" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa ?')">Delete</a>
                 </td>
             </tr>
