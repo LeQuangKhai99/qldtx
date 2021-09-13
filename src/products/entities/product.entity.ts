@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Category } from "src/categories/entities/category.entity";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Product {
@@ -11,11 +12,17 @@ export class Product {
     @Column()
     slug: string;
 
-    @Column("decimal", {precision: 5, scale: 2})
+    @Column("decimal", {precision: 15, scale: 2})
     price: number;
 
-    @Column("decimal", {precision: 5, scale: 2})
+    @Column("decimal", {precision: 15, scale: 2})
     promotion_price: number;
+
+    @Column()
+    image: string;
+
+    @ManyToOne(type => Category, cate => cate.products)
+    category: Category;
 
     @CreateDateColumn()
     created_at: Date;

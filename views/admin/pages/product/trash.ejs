@@ -1,6 +1,6 @@
 <div style="display: flex; margin: 10px 0; justify-content: space-between;">
-    <a href="/admin/category/add"  class="btn btn-success">Add</a>
-    <a href="/admin/category/trash"  class="btn btn-danger">Trash</a>
+    <a href="/admin/products/add"  class="btn btn-success">Add</a>
+    <a href="/admin/products/"  class="btn btn-warning">List</a>
 </div>
 <div class="table-responsive">
     <table style="text-align: center;" class="table table-bordered" width="100%" cellspacing="0">
@@ -17,8 +17,8 @@
                 <td><%= cate.id %></td>
                 <td><%= cate.name %></td>
                 <td>
-                    <a href="/admin/category/update/<%= cate.slug %>" type="button" class="btn btn-success">Edit</a>
-                    <a href="/admin/category/softDelete/<%= cate.id %>" type="button" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa ?')">Delete</a>
+                    <a href="/admin/products/restore/<%= cate.id %>" type="button" class="btn btn-success"  onclick="return confirm('Bạn có chắc muốn khôi phục ?')">Restore</a>
+                    <a href="/admin/products/delete/<%= cate.id %>" type="button" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa ?')">Delete</a>
                 </td>
             </tr>
             <% }) %>

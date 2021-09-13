@@ -29,6 +29,7 @@ export class AppController {
       title: 'Dashboard',
       error: req.flash('error'),
       success: req.flash('success'),
+      user: req.user
     });
   }
 

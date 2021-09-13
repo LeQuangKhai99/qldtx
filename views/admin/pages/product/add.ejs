@@ -1,0 +1,27 @@
+<form method="POST" action="/admin/products" style="width: 70%; margin: auto;">
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input type="text" name="name" class="form-control" placeholder="product name">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Price</label>
+      <input type="number" name="price" class="form-control" placeholder="product price">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Promotion Price</label>
+      <input type="number" name="promotion_price" class="form-control" placeholder="product promotion price">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Image</label>
+      <input type="text" name="image" class="form-control" placeholder="image">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Loại sản phẩm</label>
+      <select name="categoryId" class="form-control">
+        <% categories.forEach(function(cate){ %>
+          <option value="<%= cate.id %>"><%= cate.name %></option>
+        <% }) %>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>

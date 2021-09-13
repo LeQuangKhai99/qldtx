@@ -2,6 +2,7 @@ import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/com
 import { Reflector } from "@nestjs/core";
 import { AuthGuard } from "@nestjs/passport";
 import { IS_PUBLIC_KEY } from "src/common/decorators/public.decorator";
+import { GlobalService } from "src/common/global/GlobalService";
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -26,6 +27,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         if(err || !user) {
             throw err || new UnauthorizedException();
         }
+        GlobalService.globalUser = user;
         return user;
     }
 }

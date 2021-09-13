@@ -42,12 +42,16 @@ export class CategoriesService {
     });
   }
 
-  findAll(page) {
-    return this.cateRepository.find({
+  async findAll(page) {
+    return await this.cateRepository.find({
       // relations: ['products'],
       skip: page * (+process.env.PAGE_SIZE)  || 0,
       take: (+process.env.PAGE_SIZE) 
     });
+  }
+
+  async getAll() {
+    return await this.cateRepository.find();
   }
 
   findSoftDelete(page) {
@@ -71,8 +75,17 @@ export class CategoriesService {
     });
   }
 
-  findOne(id: number) {
-    return this.cateRepository.findOne(id);
+  async findOne(id: number) {
+    return await this.cateRepository.findOne(id);
+  }
+
+  async findOneTrash(id: number) {
+    return await this.cateRepository.find({
+      withDeleted: true,
+      where: {
+        id
+      }
+    });
   }
 
   findBySlug(slug: string) {
@@ -114,6 +127,10 @@ export class CategoriesService {
 
   softRemove(id: number) {
     return this.cateRepository.softDelete(id);
+  }
+
+  async restore(id: number) {
+    return await this.cateRepository.restore(id);
   }
 
   remove(id: number) {
