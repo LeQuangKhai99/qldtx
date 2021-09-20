@@ -25,12 +25,12 @@ export class AuthController {
     @UseGuards(LoginGuard)
     @Post('login')
     login(@Req() req: Request,@Res() res: Response) {
-        res.redirect('/');
+        return res.redirect('/');
     }
 
     @Get('logout')
     logout(@Req() req: Request, @Res() res: Response) {
         req.logOut();
-        res.redirect('/');
+        return res.redirect('/');
     }
 }

@@ -17,12 +17,12 @@
                     <li><a href="cart.html">Cart</a></li>
                     <li><a href="checkout.html">Checkout</a></li>
 					<li class="dropdown">
-						<a class="main-menu dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">Loại Sản Phẩm
+						<a class="main-menu dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">Category
 							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 							<% categories.forEach(function(cate){ %>
-							<li><a class="cate-item" href="#"><%= cate.name %></a></li>
+							<li><a class="cate-item" href="/category/<%= cate.slug %>"><%= cate.name %></a></li>
 							<% }) %>
 						</ul>
 					</li>

@@ -26,7 +26,7 @@ export class CategoriesService {
         ...createCategoryDto,
         slug: convertToSlug(createCategoryDto.name),
         image: arr.join('/')
-      });
+      })
       return this.cateRepository.save(newCate);
     }
     else {
@@ -77,8 +77,14 @@ export class CategoriesService {
   }
 
   totalPageSoftDelete() {
-    return this.cateRepository.findAndCount({
-      deleted_at: IsNull()
+    return this.cateRepository.count({
+      withDeleted: true,
+      order: {
+        'id': 'DESC'
+      },
+      where: {
+        deleted_at: Not(IsNull())
+      },
     });
   }
 
@@ -97,7 +103,10 @@ export class CategoriesService {
 
   findBySlug(slug: string) {
     return this.cateRepository.findOne({
-      slug: slug
+      relations: ['products'],
+      where: {
+        slug
+      }
     });
   }
 
@@ -107,7 +116,7 @@ export class CategoriesService {
     if(!cate) {
       throw new HttpException({
         status: HttpStatus.NOT_FOUND,
-        error: ['Loại sản phẩm không tồn tại!'],
+        error: 'Loại sản phẩm không tồn tại!',
         redirect: `/admin/category`
       }, HttpStatus.NOT_FOUND);
     }

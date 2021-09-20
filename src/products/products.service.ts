@@ -55,6 +55,15 @@ export class ProductsService {
     });
   }
 
+  async findLastest() {
+    return await this.productRepository.find({
+      order: {
+        'id': 'DESC'
+      },
+      take: 5
+    });
+  }
+
   async findAll(page) {
     return await this.productRepository.find({
       relations: ['category'],
@@ -80,13 +89,35 @@ export class ProductsService {
     });
   }
 
+  findByCate(cate, page) {
+    return this.productRepository.find({
+      where: {
+        category: cate,
+      },
+      order: {
+        'id': 'DESC'
+      },
+      skip: page * (+process.env.PAGE_SIZE)  || 0,
+      take: (+process.env.PAGE_SIZE),
+    });
+  }
+
   totalPage() {
     return this.productRepository.count();
   }
 
+  totalRecordByCate(cate) {
+    return this.productRepository.count({
+      category: cate
+    });
+  }
+
   totalPageSoftDelete() {
-    return this.productRepository.findAndCount({
-      deleted_at: IsNull()
+    return this.productRepository.count({
+      withDeleted: true,
+      where: {
+        deleted_at: Not(IsNull())
+      },
     });
   }
 
@@ -115,6 +146,18 @@ export class ProductsService {
     });
   }
 
+  findRelate(id, cate) {
+    return this.productRepository.find({
+      where: {
+        id: Not(id),
+        category: cate
+      },
+      order: {
+        'id': 'DESC'
+      },
+      take: 4
+    });
+  }
   async update(id: number, updateProductDto: UpdateProductDto, file: Express.Multer.File) {
     const product = await this.productRepository.findOne(id);
     

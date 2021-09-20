@@ -49,7 +49,7 @@ export class ProductsController {
     else {
       req.flash('error', 'Có lỗi xảy ra vui lòng thử lại sau!');
     }
-    res.redirect('/admin/products');
+    return res.redirect('/admin/products');
   }
 
   @Get()
@@ -75,7 +75,7 @@ export class ProductsController {
     const categories = await this.categoryService.getAll();
     if(!product){
       req.flash('error', 'Sản phẩm không tồn tại');
-      res.redirect('/admin/product');
+      return res.redirect('/admin/product');
     }
     res.render('admin/pages/product/edit', {
       title: 'Edit Products',
@@ -104,7 +104,7 @@ export class ProductsController {
     else {
       req.flash('error', 'Có lỗi xảy ra vui lòng thử lại sau!');
     }
-    res.redirect('/admin/products');
+    return res.redirect('/admin/products');
   }
 
   @Get('/softDelete/:id')
@@ -117,20 +117,20 @@ export class ProductsController {
       await this.productsService.softRemove(+id);
       req.flash('success', 'Xóa sẩn phẩm thành công!');
     }
-    res.redirect('/admin/products');
+    return res.redirect('/admin/products');
   }
 
   @Get('trash')
   async trash(@Req() req, @Res() res) {
     const products = await this.productsService.findSoftDelete(req.query.page || 0);
-    const totalPage = Math.ceil(await this.productsService.totalPage()/ (+process.env.PAGE_SIZE));
+    const totalPage = Math.ceil(await this.productsService.totalPageSoftDelete()/ (+process.env.PAGE_SIZE));
 
     res.render('admin/pages/product/trash', {
       title: 'Trash Categories',
       error: req.flash('error'),
       success: req.flash('success'),
       products,
-      paginate: paginate(req.query.page || 0, totalPage, '/admin/products'),
+      paginate: paginate(req.query.page || 0, totalPage, '/admin/products/trash'),
       user: req.user
     });
   }
@@ -147,13 +147,13 @@ export class ProductsController {
       await this.productsService.restore(+id);
     }
 
-    res.redirect('/admin/products/trash');
+    return res.redirect('/admin/products/trash');
   }
 
   @Get('delete/:id')
   async delete(@Param('id') id: string,@Req() req, @Res() res) {
     req.flash('success', 'Xóa sẩn phẩm thành công!');
     await this.productsService.remove(+id);
-    res.redirect('/admin/products/trash');
+    return res.redirect('/admin/products/trash');
   }
 }

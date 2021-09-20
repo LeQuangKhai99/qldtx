@@ -44,7 +44,7 @@ export class CategoriesController {
     else {
       req.flash('error', 'Có lỗi xảy ra vui lòng thử lại sau!');
     }
-    res.redirect('/admin/category');
+    return res.redirect('/admin/category');
   }
 
   @Get()
@@ -67,7 +67,7 @@ export class CategoriesController {
     const cate = await this.categoriesService.findBySlug(slug);
     if(!cate){
       req.flash('error', 'Loại sản phẩm không tồn tại');
-      res.redirect('/admin/category');
+      return res.redirect('/admin/category');
     }
     res.render('admin/pages/category/edit', {
       title: 'Edit Categories',
@@ -95,7 +95,7 @@ export class CategoriesController {
     else {
       req.flash('error', 'Có lỗi xảy ra vui lòng thử lại sau!');
     }
-    res.redirect('/admin/category/');
+    return res.redirect('/admin/category/');
   }
 
   @Get('/softDelete/:id')
@@ -108,20 +108,20 @@ export class CategoriesController {
       await this.categoriesService.softRemove(+id);
       req.flash('success', 'Xóa loại sẩn phẩm thành công!');
     }
-    res.redirect('/admin/category');
+    return res.redirect('/admin/category');
   }
 
   @Get('trash')
   async trash(@Req() req, @Res() res) {
     const categories = await this.categoriesService.findSoftDelete(req.query.page || 0);
-    const totalPage = Math.ceil(await this.categoriesService.totalPage()/ (+process.env.PAGE_SIZE));
+    const totalPage = Math.ceil(await this.categoriesService.totalPageSoftDelete()/ (+process.env.PAGE_SIZE));
 
     res.render('admin/pages/category/trash', {
       title: 'Trash Categories',
       error: req.flash('error'),
       success: req.flash('success'),
       categories,
-      paginate: paginate(req.query.page || 0, totalPage, '/admin/category'),
+      paginate: paginate(req.query.page || 0, totalPage, '/admin/category/trash'),
       user: req.user
     });
   }
@@ -138,13 +138,13 @@ export class CategoriesController {
       await this.categoriesService.restore(+id);
     }
 
-    res.redirect('/admin/category/trash');
+    return res.redirect('/admin/category/trash');
   }
 
   @Get('delete/:id')
   async delete(@Param('id') id: string,@Req() req, @Res() res) {
     req.flash('success', 'Xóa loại sẩn phẩm thành công!');
     await this.categoriesService.remove(+id);
-    res.redirect('/admin/category/trash');
+    return res.redirect('/admin/category/trash');
   }
 }
