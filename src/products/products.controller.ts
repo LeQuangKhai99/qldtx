@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req, UseFilters, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req, UseFilters, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -6,6 +6,9 @@ import paginate from 'src/common/paginate';
 import { AuthenticatedGuard } from 'src/auth/guard/authenticated.guard';
 import { AuthExceptionFilter } from 'src/common/filters/auth-exceptions.filter';
 import { CategoriesService } from 'src/categories/categories.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { customFileName } from 'src/common/custom-file-name';
 
 @UseFilters(AuthExceptionFilter)
 @UseGuards(AuthenticatedGuard)
@@ -29,8 +32,16 @@ export class ProductsController {
   }
 
   @Post()
-  async create(@Body() createProductDto: CreateProductDto, @Req() req, @Res() res) {
-    const product = await this.productsService.create(createProductDto);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination:'./public/upload/product',
+        filename:customFileName
+      }),
+    })
+  )
+  async create(@Body() createProductDto: CreateProductDto, @Req() req, @Res() res, @UploadedFile() file: Express.Multer.File) {
+    const product = await this.productsService.create(createProductDto, file);
     
     if(product) {
       req.flash('success', 'Thêm mới sản phẩm thành công!');
@@ -77,8 +88,16 @@ export class ProductsController {
   }
 
   @Post('/update/:id')
-  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto, @Req() req, @Res() res) {
-    const product = await this.productsService.update(+id, updateProductDto);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination:'./public/upload/product',
+        filename:customFileName
+      }),
+    })
+  )
+  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto, @Req() req, @Res() res, @UploadedFile() file: Express.Multer.File) {
+    const product = await this.productsService.update(+id, updateProductDto, file);
     if(product) {
       req.flash('success', 'Cập nhật sản phẩm thành công!');
     }
@@ -103,14 +122,14 @@ export class ProductsController {
 
   @Get('trash')
   async trash(@Req() req, @Res() res) {
-    const categories = await this.productsService.findSoftDelete(req.query.page || 0);
+    const products = await this.productsService.findSoftDelete(req.query.page || 0);
     const totalPage = Math.ceil(await this.productsService.totalPage()/ (+process.env.PAGE_SIZE));
 
     res.render('admin/pages/product/trash', {
       title: 'Trash Categories',
       error: req.flash('error'),
       success: req.flash('success'),
-      categories,
+      products,
       paginate: paginate(req.query.page || 0, totalPage, '/admin/products'),
       user: req.user
     });
@@ -133,15 +152,8 @@ export class ProductsController {
 
   @Get('delete/:id')
   async delete(@Param('id') id: string,@Req() req, @Res() res) {
-    const cate = await this.productsService.findOneTrash(+id);
-
-    if(!cate) {
-      req.flash('error', 'Sản phẩm không tồn tại!');
-    }
-    else {
-      await this.productsService.remove(+id);
-      req.flash('success', 'Xóa sẩn phẩm thành công!');
-    }
+    req.flash('success', 'Xóa sẩn phẩm thành công!');
+    await this.productsService.remove(+id);
     res.redirect('/admin/products/trash');
   }
 }

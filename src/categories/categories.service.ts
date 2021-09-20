@@ -7,6 +7,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 import validate from './validate/validate-category';
+import * as fs from 'fs';
 
 @Injectable()
 export class CategoriesService {
@@ -15,22 +16,23 @@ export class CategoriesService {
     private cateRepository: Repository<Category>
   ){}
 
-  async create(createCategoryDto: CreateCategoryDto) {
-    const {name} = createCategoryDto;
+  async create(createCategoryDto: CreateCategoryDto, file: Express.Multer.File) {
     
-    if(await validate(name, this.cateRepository) === true) {
-      const cateDTO = {
-        name: createCategoryDto.name,
-        slug: convertToSlug(createCategoryDto.name)
-      }
-      
-      const newCate = await this.cateRepository.create(cateDTO);
+    const isValid = await validate(createCategoryDto, this.cateRepository, file);
+    if(isValid === true) {
+      const arr =  file.path.split('/');
+      arr.splice(0, 1);
+      const newCate = await this.cateRepository.create({
+        ...createCategoryDto,
+        slug: convertToSlug(createCategoryDto.name),
+        image: arr.join('/')
+      });
       return this.cateRepository.save(newCate);
     }
     else {
       throw new HttpException({
         status: HttpStatus.BAD_REQUEST,
-        error: await validate(name, this.cateRepository),
+        error: isValid,
         redirect: '/admin/category/add'
       }, HttpStatus.BAD_REQUEST);
     }
@@ -44,7 +46,9 @@ export class CategoriesService {
 
   async findAll(page) {
     return await this.cateRepository.find({
-      // relations: ['products'],
+      order: {
+        'id': 'DESC'
+      },
       skip: page * (+process.env.PAGE_SIZE)  || 0,
       take: (+process.env.PAGE_SIZE) 
     });
@@ -57,6 +61,9 @@ export class CategoriesService {
   findSoftDelete(page) {
     return this.cateRepository.find({
       withDeleted: true,
+      order: {
+        'id': 'DESC'
+      },
       where: {
         deleted_at: Not(IsNull())
       },
@@ -80,7 +87,7 @@ export class CategoriesService {
   }
 
   async findOneTrash(id: number) {
-    return await this.cateRepository.find({
+    return await this.cateRepository.findOne({
       withDeleted: true,
       where: {
         id
@@ -94,8 +101,7 @@ export class CategoriesService {
     });
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    const {name} = updateCategoryDto;
+  async update(id: number, updateCategoryDto: UpdateCategoryDto, file: Express.Multer.File) {
     const cate = await this.cateRepository.findOne(id);
     
     if(!cate) {
@@ -105,21 +111,32 @@ export class CategoriesService {
         redirect: `/admin/category`
       }, HttpStatus.NOT_FOUND);
     }
-    if(await validate(name, this.cateRepository, id) === true) {
-      const cateDTO = {
-        id: +id,
-        name: updateCategoryDto.name,
-        slug: convertToSlug(updateCategoryDto.name)
+    const isValid = await validate(updateCategoryDto, this.cateRepository, file, id);
+    
+    if(isValid === true) {
+      let path = '';
+      if(file) {
+        const arr =  file.path?.split('/');
+        arr.splice(0, 1);
+        path = arr.join('/');
+        fs.unlinkSync('./public/'+cate.image);
       }
-      
-      const newCate = await this.cateRepository.preload(cateDTO);
+      else {
+        path = cate.image;
+      }
+      updateCategoryDto.slug = convertToSlug(updateCategoryDto.name);
+      const newCate = await this.cateRepository.preload({
+        id: +id,
+        ...updateCategoryDto,
+        image: path
+      });
       
       return this.cateRepository.save(newCate);
     }
     else {
       throw new HttpException({
         status: HttpStatus.BAD_REQUEST,
-        error: await validate(name, this.cateRepository),
+        error: isValid,
         redirect: `/admin/category/update/${cate.slug}`
       }, HttpStatus.BAD_REQUEST);
     }
@@ -133,7 +150,19 @@ export class CategoriesService {
     return await this.cateRepository.restore(id);
   }
 
-  remove(id: number) {
-    return this.cateRepository.delete(id);
+  async remove(id: number) {
+    const cate = await this.findOneTrash(+id);
+
+    if(!cate) {
+      throw new HttpException({
+        status: HttpStatus.BAD_REQUEST,
+        error: 'Loại sản phẩm không tồn tại!',
+        redirect: `/admin/category`
+      }, HttpStatus.BAD_REQUEST);
+    }
+    else {
+      fs.unlinkSync('./public/'+cate.image);
+    }
+    return await this.cateRepository.delete(id);
   }
 }

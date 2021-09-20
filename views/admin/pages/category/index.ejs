@@ -8,6 +8,7 @@
             <tr>
                 <th>Id</th>
                 <th>Name</th>
+                <th>Image</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -16,6 +17,9 @@
             <tr>
                 <td><%= cate.id %></td>
                 <td><%= cate.name %></td>
+                <td>
+                    <img style="width: 100px; height: 100px;" src="/<%= cate.image %>" />
+                </td>
                 <td>
                     <a href="/admin/category/update/<%= cate.slug %>" type="button" class="btn btn-success">Edit</a>
                     <a href="/admin/category/softDelete/<%= cate.id %>" type="button" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa ?')">Delete</a>

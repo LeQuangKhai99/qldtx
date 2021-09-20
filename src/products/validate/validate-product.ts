@@ -1,5 +1,5 @@
-export default async function validate(createProductDto, repo, id = -1) {
-	const {name, price, promotion_price, image, categoryId} = createProductDto;
+export default async function validate(createProductDto, repo, file, id = -1) {
+	const {name, price, promotion_price, categoryId} = createProductDto;
 	
     // check empty
     if(!name || !price || !promotion_price) {
@@ -33,11 +33,14 @@ export default async function validate(createProductDto, repo, id = -1) {
 	}
 	else {
 		// check image
-		if(!image) {
+		if(!file) {
 			return ['Vui lòng điền đầy đủ thông tin'];
 		}
 	}
 
+	if (file && !file.originalname?.match(/\.(jpg|jpeg|png|gif)$/)) {
+		return ['Vui lòng chọn tệp ảnh!'];
+	}
 	//check unique 
 	const product = await repo.findOne({
 		name: name

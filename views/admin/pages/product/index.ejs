@@ -10,6 +10,7 @@
                 <th>Name</th>
                 <th>Price</th>
                 <th>Promotion Price</th>
+                <th>Category</th>
                 <th>Image</th>
                 <th>Action</th>
             </tr>
@@ -21,8 +22,9 @@
                 <td><%= product.name %></td>
                 <td><%= product.price %></td>
                 <td><%= product.promotion_price %></td>
+                <td><%= product.category?.name %></td>
                 <td>
-                    <img style="width: 100px; height: 100px;" src="<%= product.image %>" />
+                    <img style="width: 100px; height: 100px;" src="/<%= product.image %>" />
                 </td>
                 <td>
                     <a href="/admin/products/update/<%= product.slug %>" type="button" class="btn btn-success">Edit</a>

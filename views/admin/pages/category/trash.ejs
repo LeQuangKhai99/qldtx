@@ -8,6 +8,7 @@
             <tr>
                 <th>Id</th>
                 <th>Name</th>
+                <th>Image</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -16,6 +17,9 @@
             <tr>
                 <td><%= cate.id %></td>
                 <td><%= cate.name %></td>
+                <td>
+                    <img style="width: 100px; height: 100px;" src="/<%= cate.image %>" />
+                </td>
                 <td>
                     <a href="/admin/category/restore/<%= cate.id %>" type="button" class="btn btn-success"  onclick="return confirm('Bạn có chắc muốn khôi phục ?')">Restore</a>
                     <a href="/admin/category/delete/<%= cate.id %>" type="button" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa ?')">Delete</a>

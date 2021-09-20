@@ -1,5 +1,25 @@
 .floatleft { float: left }
 .floatright { float: right }
+
+.cart-item {
+    background-color: white !important;
+}
+
+.mainmenu-area ul.navbar-nav li:hover .cate-item{
+    background-color: white;
+    color: black;
+}
+
+.cate-item:hover {
+    background-color: #5a88ca !important;
+    color: white !important;
+}
+
+.dropdown-menu {
+    overflow: scroll;
+    overflow-x: hidden;
+    max-height: 300px;
+}
 .alignleft {
     float: left;
     margin-right: 15px;

@@ -1,4 +1,5 @@
-export default async function validate(name, repo, id = -1) {
+export default async function validate(createCategoryDto, repo, file, id = -1) {
+	const {name} = createCategoryDto;
     // check empty
     if(!name) {
       return ['Vui lòng điền tên loại sản phẩm'];
@@ -14,6 +15,16 @@ export default async function validate(name, repo, id = -1) {
 		if(cate) {
 			return true;
 		}
+	}
+	else {
+		// check image
+		if(!file) {
+			return ['Vui lòng điền đầy đủ thông tin'];
+		}
+	}
+
+	if (file && !file.originalname?.match(/\.(jpg|jpeg|png|gif)$/)) {
+		return ['Vui lòng chọn tệp ảnh!'];
 	}
     //check unique 
     const cate = await repo.findOne({

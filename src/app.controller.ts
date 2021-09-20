@@ -1,6 +1,6 @@
-import { Controller, Get, Post, UseGuards, Request, UseFilters, Render, Req, Res } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Post, UseGuards, Request, UseFilters, Req, Res } from '@nestjs/common';
 import { AuthenticatedGuard } from './auth/guard/authenticated.guard';
+import { CategoriesService } from './categories/categories.service';
 import { Public } from './common/decorators/public.decorator';
 import { AuthExceptionFilter } from './common/filters/auth-exceptions.filter';
 import { Roles } from './roles/decorator/roles.decorator';
@@ -11,14 +11,17 @@ import { Role } from './roles/enum/role.enum';
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
+    private readonly categoryService: CategoriesService,
   ) {}
 
   @Public()
   @Get()
-  index(@Req() req, @Res() res) {
+  async index(@Req() req, @Res() res) {
+    const categories = await this.categoryService.getAll();
+    
     res.render('static/index', {
-      layout: false
+      layout: 'static/layout/main',
+      categories
     });
   }
 

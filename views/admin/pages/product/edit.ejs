@@ -1,4 +1,4 @@
-<form method="POST" action="/admin/products/update/<%= product.id %>" style="width: 70%; margin: auto;">
+<form method="POST" action="/admin/products/update/<%= product.id %>" style="width: 70%; margin: auto;" enctype="multipart/form-data">
   <div class="mb-3">
     <label class="form-label">Name</label>
     <input type="text" value="<%= product.name %>" name="name" class="form-control" placeholder="product name">
@@ -13,8 +13,8 @@
   </div>
   <div class="mb-3">
     <label class="form-label">Image</label>
-    <img style="width: 200px; display: block;" src="<%= product.image %>" />
-    <input type="text"  name="image" class="form-control" placeholder="image">
+    <img style="width: 200px; display: block;" src="\<%= product.image %>" />
+    <input type="file"  name="image" class="form-control" placeholder="image">
   </div>
   <div class="mb-3">
     <label class="form-label">Loại sản phẩm</label>

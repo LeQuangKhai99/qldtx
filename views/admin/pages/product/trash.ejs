@@ -8,17 +8,27 @@
             <tr>
                 <th>Id</th>
                 <th>Name</th>
+                <th>Price</th>
+                <th>Promotion Price</th>
+                <th>Category</th>
+                <th>Image</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            <% categories.forEach(function(cate){ %>
+            <% products.forEach(function(product){ %>
             <tr>
-                <td><%= cate.id %></td>
-                <td><%= cate.name %></td>
+                <td><%= product.id %></td>
+                <td><%= product.name %></td>
+                <td><%= product.price %></td>
+                <td><%= product.promotion_price %></td>
+                <td><%= product.category?.name %></td>
                 <td>
-                    <a href="/admin/products/restore/<%= cate.id %>" type="button" class="btn btn-success"  onclick="return confirm('Bạn có chắc muốn khôi phục ?')">Restore</a>
-                    <a href="/admin/products/delete/<%= cate.id %>" type="button" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa ?')">Delete</a>
+                    <img style="width: 100px; height: 100px;" src="/<%= product.image %>" />
+                </td>
+                <td>
+                    <a href="/admin/products/restore/<%= product.id %>" type="button" class="btn btn-success"  onclick="return confirm('Bạn có chắc muốn khôi phục ?')">Restore</a>
+                    <a href="/admin/products/delete/<%= product.id %>" type="button" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa ?')">Delete</a>
                 </td>
             </tr>
             <% }) %>

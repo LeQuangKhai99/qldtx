@@ -1,7 +1,12 @@
-<form method="POST" action="/admin/category/update/<%= cate.id %>" style="width: 70%; margin: auto;">
+<form method="POST" action="/admin/category/update/<%= cate.id %>" style="width: 70%; margin: auto;" enctype="multipart/form-data">
     <div class="mb-3">
       <label class="form-label">Name</label>
       <input type="text" name="name" value="<%= cate.name %>" class="form-control" placeholder="category name">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Image</label>
+      <img style="width: 200px; display: block;" src="/<%= cate.image %>" />
+      <input type="file" name="image" class="form-control">
     </div>
     <button type="submit" class="btn btn-primary">Update</button>
 </form>

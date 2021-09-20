@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, Res, UseFilters, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, Res, UseFilters, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthenticatedGuard } from 'src/auth/guard/authenticated.guard';
+import { customFileName } from 'src/common/custom-file-name';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { AuthExceptionFilter } from 'src/common/filters/auth-exceptions.filter';
 import paginate from 'src/common/paginate';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { diskStorage } from 'multer';
 
 @UseFilters(AuthExceptionFilter)
 @UseGuards(AuthenticatedGuard)
@@ -24,8 +27,16 @@ export class CategoriesController {
   }
 
   @Post()
-  async create(@Body() createCategoryDto: CreateCategoryDto, @Req() req, @Res() res) {
-    const cate = await this.categoriesService.create(createCategoryDto);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination:'./public/upload/category',
+        filename:customFileName
+      }),
+    })
+  )
+  async create(@Body() createCategoryDto: CreateCategoryDto, @Req() req, @Res() res, @UploadedFile() file: Express.Multer.File) {
+    const cate = await this.categoriesService.create(createCategoryDto, file);
     
     if(cate) {
       req.flash('success', 'Thêm mới loại sản phẩm thành công!');
@@ -68,8 +79,16 @@ export class CategoriesController {
   }
 
   @Post('/update/:id')
-  async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto, @Req() req, @Res() res) {
-    const cate = await this.categoriesService.update(+id, updateCategoryDto);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination:'./public/upload/category',
+        filename:customFileName
+      }),
+    })
+  )
+  async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto, @Req() req, @Res() res, @UploadedFile() file: Express.Multer.File) {
+    const cate = await this.categoriesService.update(+id, updateCategoryDto, file);
     if(cate) {
       req.flash('success', 'Cập nhật loại sản phẩm thành công!');
     }
@@ -124,15 +143,8 @@ export class CategoriesController {
 
   @Get('delete/:id')
   async delete(@Param('id') id: string,@Req() req, @Res() res) {
-    const cate = await this.categoriesService.findOneTrash(+id);
-
-    if(!cate) {
-      req.flash('error', 'Loại sản phẩm không tồn tại!');
-    }
-    else {
-      await this.categoriesService.remove(+id);
-      req.flash('success', 'Xóa loại sẩn phẩm thành công!');
-    }
+    req.flash('success', 'Xóa loại sẩn phẩm thành công!');
+    await this.categoriesService.remove(+id);
     res.redirect('/admin/category/trash');
   }
 }
