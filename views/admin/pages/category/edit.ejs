@@ -8,5 +8,6 @@
       <img style="width: 200px; display: block;" src="/<%= cate.image %>" />
       <input type="file" name="image" class="form-control">
     </div>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <button type="submit" class="btn btn-primary">Update</button>
 </form>

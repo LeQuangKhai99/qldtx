@@ -1,8 +1,8 @@
-import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule, CacheModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { APP_GUARD } from '@nestjs/core';
@@ -15,12 +15,20 @@ import { RolesModule } from './roles/roles.module';
 import { RolesGuard } from './roles/guard/roles.guard';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
+import { RedisModule} from 'nestjs-redis';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
+    CacheModule.register({
+      store: redisStore,
+      host: "redis",
+      port: 6379
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
+    
     UsersModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -38,7 +46,7 @@ import { ProductsModule } from './products/products.module';
     RolesModule,
     PassportModule.register({session: true}),
     AdminModule,
-    CategoriesModule,
+    CategoriesModule,RedisModule,
     ProductsModule
   ],
   controllers: [AppController],

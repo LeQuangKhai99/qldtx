@@ -53,6 +53,16 @@ services:
       - "81:80"
     networks:
       - default
+  redis:
+    image: redis:5-alpine
+    container_name: node_redis
+    volumes: 
+      - ./docker/redis:/data
+    restart: unless-stopped
+    ports: 
+      - 6379:6379
+    networks: 
+      - default
 networks:
   default:
     driver: bridge

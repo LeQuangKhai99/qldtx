@@ -26,7 +26,7 @@ async function bootstrap() {
 
   app.use(bodyParser.urlencoded({ extended: false }))
   app.use(cookieParser());
-  app.use(csurf({cookie: true}));
+  // app.use(csurf({cookie: true}));
 
   app.useGlobalPipes(new ValidationPipe());
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
@@ -36,6 +36,12 @@ async function bootstrap() {
   app.use(passport.session());
   app.use(flash());
   app.use(expressLayouts);
+  app.use(function(req, res, next) {
+    res.locals.user = req.user;
+    // res.locals.csrfToken = req.csrfToken(),
+    res.locals.csrfToken = '',
+    next();
+  });
   await app.listen(3000);
 }
 bootstrap();

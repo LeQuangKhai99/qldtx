@@ -9,9 +9,11 @@ import { CategoriesService } from 'src/categories/categories.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { customFileName } from 'src/common/custom-file-name';
+import { Roles } from 'src/roles/decorator/roles.decorator';
+import { Role } from 'src/roles/enum/role.enum';
 
 @UseFilters(AuthExceptionFilter)
-@UseGuards(AuthenticatedGuard)
+@Roles(Role.Admin)
 @Controller('')
 export class ProductsController {
   constructor(
@@ -26,7 +28,6 @@ export class ProductsController {
       title: 'Add Product',
       error: req.flash('error'),
       success: req.flash('success'), 
-      user: req.user,
       categories
     });
   }
@@ -64,7 +65,6 @@ export class ProductsController {
       success: req.flash('success'),
       products,
       paginate: paginate(req.query.page || 0, totalPage, '/admin/products'),
-      user: req.user
     });
   }
 
@@ -82,7 +82,6 @@ export class ProductsController {
       error: req.flash('error'),
       success: req.flash('success'),
       product,
-      user: req.user,
       categories
     });
   }
@@ -131,7 +130,6 @@ export class ProductsController {
       success: req.flash('success'),
       products,
       paginate: paginate(req.query.page || 0, totalPage, '/admin/products/trash'),
-      user: req.user
     });
   }
 

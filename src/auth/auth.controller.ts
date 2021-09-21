@@ -17,7 +17,6 @@ export class AuthController {
     index(@Req() req, @Res() res) {
         res.render('auth/index', {
             layout: false,
-            csrfToken: req.csrfToken(),
             success: req.flash('success'),
             error: req.flash('error')
         });

@@ -2,16 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, Res, Use
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthenticatedGuard } from 'src/auth/guard/authenticated.guard';
 import { customFileName } from 'src/common/custom-file-name';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { AuthExceptionFilter } from 'src/common/filters/auth-exceptions.filter';
 import paginate from 'src/common/paginate';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { diskStorage } from 'multer';
+import { Role } from 'src/roles/enum/role.enum';
+import { Roles } from 'src/roles/decorator/roles.decorator';
 
 @UseFilters(AuthExceptionFilter)
-@UseGuards(AuthenticatedGuard)
+@Roles(Role.Admin)
 @Controller('')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
@@ -22,7 +23,6 @@ export class CategoriesController {
       title: 'Add Category',
       error: req.flash('error'),
       success: req.flash('success'), 
-      user: req.user
     });
   }
 
@@ -58,7 +58,6 @@ export class CategoriesController {
       success: req.flash('success'),
       categories,
       paginate: paginate(req.query.page || 0, totalPage, '/admin/category'),
-      user: req.user
     });
   }
 
@@ -74,7 +73,6 @@ export class CategoriesController {
       error: req.flash('error'),
       success: req.flash('success'),
       cate,
-      user: req.user
     });
   }
 
@@ -122,7 +120,6 @@ export class CategoriesController {
       success: req.flash('success'),
       categories,
       paginate: paginate(req.query.page || 0, totalPage, '/admin/category/trash'),
-      user: req.user
     });
   }
 

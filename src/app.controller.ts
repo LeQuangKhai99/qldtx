@@ -1,4 +1,5 @@
-import { Controller, Get, Post, UseGuards, Request, UseFilters, Req, Res, Param } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Request, UseFilters, Req, Res, Param, Inject, CACHE_MANAGER } from '@nestjs/common';
+import { RedisService } from 'nestjs-redis';
 import { AuthenticatedGuard } from './auth/guard/authenticated.guard';
 import { CategoriesService } from './categories/categories.service';
 import { Public } from './common/decorators/public.decorator';
@@ -7,17 +8,35 @@ import paginate from './common/paginate';
 import { ProductsService } from './products/products.service';
 import { Roles } from './roles/decorator/roles.decorator';
 import { Role } from './roles/enum/role.enum';
+import {Cache} from 'cache-manager';
 
 @UseFilters(AuthExceptionFilter)
-@UseGuards(AuthenticatedGuard)
-@Controller()
+@Controller('')
 export class AppController {
   private categories = null;
   constructor(
     private readonly categoryService: CategoriesService,
-    private readonly productService: ProductsService
+    private readonly productService: ProductsService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {
     this.categories = this.categoryService.getAll();
+  }
+
+  @Public()
+  @Get('test')
+  async test() {
+    let val = await this.cacheManager.get('val');
+    if(val) {
+      return {
+        data: val,
+        loadFrom: "cache"
+      };
+    }
+    await this.cacheManager.set('val', 'hahah', {ttl: 300});
+    return {
+      data: 'haha',
+      loadFrom: "fake"
+    };
   }
 
   @Public()
@@ -29,7 +48,6 @@ export class AppController {
       layout: 'static/layout/main',
       categories: await this.categories,
       products,
-      user: req.user,
       error: req.flash('error'),
       success: req.flash('success'),
     });
@@ -55,7 +73,6 @@ export class AppController {
       categories: await this.categories,
       cate,
       products,
-      user: req.user,
       paginate: paginate(req.query.page || 0, totalPage, '/category/'+cate.slug),
       error: req.flash('error'),
       success: req.flash('success'),
@@ -76,7 +93,6 @@ export class AppController {
       layout: 'static/layout/main',
       product,
       productRelates,
-      user: req.user,
       categories: await this.categories,
       error: req.flash('error'),
       success: req.flash('success'),
@@ -90,10 +106,10 @@ export class AppController {
       title: 'Dashboard',
       error: req.flash('error'),
       success: req.flash('success'),
-      user: req.user
     });
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;

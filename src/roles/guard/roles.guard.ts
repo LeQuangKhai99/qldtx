@@ -7,11 +7,12 @@ import { Role } from "../enum/role.enum";
 export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector){}
 
-    canActivate(context: ExecutionContext): boolean {
+    canActivate(context: ExecutionContext): boolean {        
         const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
             context.getHandler(),
             context.getClass()
         ]);
+        
         if(!requiredRoles) {
             return true;
         }
@@ -24,9 +25,11 @@ export class RolesGuard implements CanActivate {
                 redirect: '/auth/login'
             }, HttpStatus.FORBIDDEN);
         }
+        
         const roles = user.roles?.map((item) => {
             return item.name
         });
+        
         
         if(requiredRoles.some((role) => roles.includes(role))) {
             return true;
