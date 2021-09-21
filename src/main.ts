@@ -8,9 +8,13 @@ import flash = require('connect-flash');
 import expressLayouts = require('express-ejs-layouts');
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'typeorm';
+import * as csurf from 'csurf';
+import * as cookieParser from 'cookie-parser';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  
   app.use(
     session({
       secret: 'my-secret',
@@ -19,6 +23,11 @@ async function bootstrap() {
     })
   );
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+  app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(cookieParser());
+  app.use(csurf({cookie: true}));
+
   app.useGlobalPipes(new ValidationPipe());
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');

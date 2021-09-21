@@ -29,6 +29,7 @@ export class AppController {
       layout: 'static/layout/main',
       categories: await this.categories,
       products,
+      user: req.user,
       error: req.flash('error'),
       success: req.flash('success'),
     });
@@ -54,6 +55,7 @@ export class AppController {
       categories: await this.categories,
       cate,
       products,
+      user: req.user,
       paginate: paginate(req.query.page || 0, totalPage, '/category/'+cate.slug),
       error: req.flash('error'),
       success: req.flash('success'),
@@ -74,6 +76,7 @@ export class AppController {
       layout: 'static/layout/main',
       product,
       productRelates,
+      user: req.user,
       categories: await this.categories,
       error: req.flash('error'),
       success: req.flash('success'),
