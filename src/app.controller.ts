@@ -11,6 +11,7 @@ import { Role } from './roles/enum/role.enum';
 import {Cache} from 'cache-manager';
 
 @UseFilters(AuthExceptionFilter)
+@UseGuards(AuthenticatedGuard)
 @Controller('')
 export class AppController {
   private categories = null;
@@ -32,7 +33,7 @@ export class AppController {
         loadFrom: "cache"
       };
     }
-    await this.cacheManager.set('val', 'hahah', {ttl: 300});
+    await this.cacheManager.set('val', 'hahah', {ttl: 60*60*24});
     return {
       data: 'haha',
       loadFrom: "fake"
@@ -99,6 +100,22 @@ export class AppController {
     })
   }
 
+  @Get('add-cart')
+  async addCart(@Req() req, @Res() res) {
+    const keyUser = 'cart-info-'+req.user.username;
+    let carts = await this.cacheManager.get(keyUser);
+    if(!carts) {
+      carts = [
+        {
+          id: 1,
+          name: 'pd 1',
+          price: 12,
+          quantity: 3
+        }
+      ]
+    }
+  }
+
   @Roles(Role.Admin)
   @Get('/admin')
   admin(@Req() req, @Res() res) {
@@ -109,7 +126,6 @@ export class AppController {
     });
   }
 
-  @UseGuards(AuthenticatedGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;

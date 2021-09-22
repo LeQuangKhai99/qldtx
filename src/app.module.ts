@@ -16,6 +16,7 @@ import { RolesGuard } from './roles/guard/roles.guard';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { RedisModule} from 'nestjs-redis';
+import { CartModule } from './cart/cart.module';
 import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
@@ -47,7 +48,8 @@ import * as redisStore from 'cache-manager-redis-store';
     PassportModule.register({session: true}),
     AdminModule,
     CategoriesModule,RedisModule,
-    ProductsModule
+    ProductsModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [
